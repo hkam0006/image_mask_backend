@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, Request
 # from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
+# from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from os.path import dirname, join
 import base64
@@ -23,8 +23,13 @@ app = FastAPI()
 ALLOWED_ORIGIN = os.environ.get("FRONTEND_URL")
 
 app.add_middleware(
-  TrustedHostMiddleware, allowed_hosts=[ALLOWED_ORIGIN]
+    CORSMiddleware,
+    allow_origins=[ALLOWED_ORIGIN],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
 client = genai.Client(api_key=os.environ.get("GOOGLE_API_KEY"))
 
 safety_settings = [
