@@ -1,7 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
-# from fastapi.middleware.trustedhost import TrustedHostMiddleware
-# from starlette.middleware.cors import CORSMiddleware
 from os.path import dirname, join
 import base64
 import numpy as np
@@ -21,14 +19,14 @@ load_dotenv(dotenv_path)
 app = FastAPI()
 
 ALLOWED_ORIGIN = os.environ.get("FRONTEND_URL")
-print(f"Allowed origin from env: {ALLOWED_ORIGIN}")
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=[ALLOWED_ORIGIN],
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[ALLOWED_ORIGIN],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 client = genai.Client(api_key=os.environ.get("GOOGLE_API_KEY"))
 
@@ -201,9 +199,6 @@ async def detect_objects(
   prompt = f"Give the segmentation masks for all {object} in this image. Output a JSON list of segmentation masks where each entry contains the 2D bounding box in the key 'box_2d', the segmentation mask in key 'mask', and the text label in the key 'label'. Use descriptive labels."
   im = Image.open(BytesIO(await file.read()))
   im.thumbnail((1024, 1024), Image.LANCZOS)
-  
-  if not req.headers.get("host").startswith(ALLOWED_ORIGIN):
-    return {"error": "Invalid host"}, 403
   
   color = (red, green,blue, alpha / 100)
   
