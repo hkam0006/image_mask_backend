@@ -1,6 +1,7 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Request
 # from fastapi.middleware.cors import CORSMiddleware
-from typing import Tuple
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from starlette.middleware.cors import CORSMiddleware
 from os.path import dirname, join
 import base64
 import numpy as np
@@ -19,15 +20,11 @@ load_dotenv(dotenv_path)
 
 app = FastAPI()
 
-# origins = [
-#     os.environ.get("FRONTEND_URL"),
-# ]
+ALLOWED_ORIGIN = os.environ.get("FRONTEND_URL")
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-# )
-
+app.add_middleware(
+  TrustedHostMiddleware, allowed_hosts=[ALLOWED_ORIGIN]
+)
 client = genai.Client(api_key=os.environ.get("GOOGLE_API_KEY"))
 
 safety_settings = [
@@ -181,6 +178,7 @@ async def health_check():
   
 @app.post("/detect_objects/")
 async def detect_objects(
+  req: Request,
   red: int, 
   green: int, 
   blue:int, 
@@ -188,10 +186,10 @@ async def detect_objects(
   object: str, 
   file: UploadFile = File(...)
 ):  
-
   prompt = f"Give the segmentation masks for all {object} in this image. Output a JSON list of segmentation masks where each entry contains the 2D bounding box in the key 'box_2d', the segmentation mask in key 'mask', and the text label in the key 'label'. Use descriptive labels."
   im = Image.open(BytesIO(await file.read()))
   im.thumbnail((1024, 1024), Image.LANCZOS)
+  
   
   color = (red, green,blue, alpha / 100)
   
