@@ -14,13 +14,6 @@ import json
 from io import BytesIO
 from dotenv import load_dotenv
 import os
-from pydantic import BaseModel
-
-class Color(BaseModel):
-    red: int
-    green: int
-    blue: int
-    alpha: int
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -34,9 +27,6 @@ origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
 )
 
 client = genai.Client(api_key=os.environ.get("GOOGLE_API_KEY"))
