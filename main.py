@@ -1,3 +1,4 @@
+from typing import Annotated
 from fastapi import FastAPI, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
 from os.path import dirname, join
@@ -13,6 +14,8 @@ from io import BytesIO
 from dotenv import load_dotenv
 import os
 import uvicorn
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import HTTPException, Depends
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -38,9 +41,16 @@ safety_settings = [
     ),
 ]
 
+security = HTTPBearer()
+
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+  token = credentials.credentials
+  if token != os.environ.get("AUTH_TOKEN"):  # Replace with your token validation logic
+    raise HTTPException(status_code=401, detail="Invalid or missing token")
+
 @app.middleware("http")
 async def log_request_origin(request: Request, call_next):
-    origin = request.headers.get("rigin")
+    origin = request.headers.get("origin")
     print(f"Incoming request headers: {request.headers}")
     response = await call_next(request)
     return response
@@ -195,7 +205,8 @@ async def detect_objects(
   blue:int, 
   alpha: int, 
   object: str, 
-  file: UploadFile = File(...)
+  file: UploadFile = File(...),
+  credentials: HTTPAuthorizationCredentials = Depends(verify_token)
 ):  
   prompt = f"Give the segmentation masks for all {object} in this image. Output a JSON list of segmentation masks where each entry contains the 2D bounding box in the key 'box_2d', the segmentation mask in key 'mask', and the text label in the key 'label'. Use descriptive labels."
   im = Image.open(BytesIO(await file.read()))
