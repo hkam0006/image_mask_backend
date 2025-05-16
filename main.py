@@ -12,6 +12,7 @@ import json
 from io import BytesIO
 from dotenv import load_dotenv
 import os
+import uvicorn
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -243,3 +244,5 @@ async def detect_objects(
     "mask": mask_only_str,
   }
   
+if __name__ == "__main__":
+  uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
