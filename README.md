@@ -8,7 +8,7 @@ Before setting up the project, ensure you have the following installed on your s
 
 - **Python 3.8 or higher**: Required to run the backend application.
 - **Git**: For cloning the repository and version control.
-- **Google API Key**: API key for accessing Google AI services (e.g., Generative AI APIs). Instructions to getting Google API key can be found [here](https://image-mask-backend-delta.vercel.app).
+- **Google API Key**: API key for accessing Google AI services (e.g., Generative AI APIs). Instructions to getting Google Gemini API key can be found [here](https://image-mask-backend-delta.vercel.app). 
 
 ## 🚀 Setup Instructions
 
@@ -55,6 +55,7 @@ To run the project locally, you need to set up environment variables.
     | `AUTH_TOKEN`      | A secret token used for authentication between the frontend and backend. You can set this to any value, but make sure it matches the token configured in your frontend .env file as well.             |
 
     🔑 Important: Ensure the AUTH_TOKEN value is the same in both your frontend and backend .env files to avoid authentication errors.
+    🔑 Important: See Prerequsites section above for information about obtaining Google Gemini API Key.
 
 ### 5. Start the development server:
 
@@ -64,11 +65,11 @@ To run the project locally, you need to set up environment variables.
 
 ## 🛠️ Tools and Technologies
 
-- **Node.js**: JavaScript runtime for building the backend.
-- **Express.js**: Web framework for creating RESTful APIs.
-- **PostgreSQL**: Database for storing application data.
-- **Sequelize**: ORM for database management.
-- **dotenv**: For managing environment variables.
+- **Python**: The primary programming language used for the backend.
+- **FastAPI**: A lightweight WSGI web application framework for building APIs.
+- **dotenv**: A module for loading environment variables from a `.env` file.
+- **Google AI APIs**: Used for integrating generative AI features into the application.
+- **Vercel**: Hosting platform for deploying the live production site.
 
 ## 🌐 Live Production Site
 
